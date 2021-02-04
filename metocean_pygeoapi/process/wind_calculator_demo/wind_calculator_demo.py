@@ -41,7 +41,7 @@ LOGGER = logging.getLogger(__name__)
 TODAY = datetime.today().strftime('%Y-%m-%d')
 TOMORROW = (datetime.now() + timedelta(1)).strftime('%Y-%m-%d')
 
-EDR_API_URL = 'https://data-api.mdl.nws.noaa.gov/EDR-API/collections/automated_gfs_100_forecast_time0_lat_0_lon_0_lv_ISBL5_Isobaric_surface_Pa/instance/00z/cube'  # noqa
+EDR_API_URL = 'https://data-api.mdl.nws.noaa.gov/EDR-API/collections/automated_gfs_100_forecast_time0_lat_0_lon_0_lv_ISBL5_Isobaric_surface_Pa/instances/{}/cube'  # noqa
 
 #: Process metadata and description
 PROCESS_METADATA = {
@@ -147,8 +147,10 @@ class WindCalculatorDemoProcessor(BaseProcessor):
             'f': 'CoverageJSON'
         }
 
+        instance_url = EDR_API_URL.format(data['datetime'].split('/')[0])
+
         LOGGER.debug('Accessing U/V data from NOAA EDR API')
-        response = requests.get(EDR_API_URL, params=params)
+        response = requests.get(instance_url, params=params)
         LOGGER.debug('request URL: {}'.format(response.url))
 
         d = response.json()
